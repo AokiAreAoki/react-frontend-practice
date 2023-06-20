@@ -6,11 +6,11 @@ import useLogout from "./useLogout";
 
 export default function useSemesters(){
 	const dispatch = useTypedDispatch();
-	const userState = useTypedSelector(state => state.semesters);
+	const semesters = useTypedSelector(state => state.semesters);
 	const logout = useLogout();
 
 	useEffect(() => {
-		if(userState.data)
+		if(semesters.data)
 			return;
 
 		const abort = new AbortController();
@@ -37,7 +37,7 @@ export default function useSemesters(){
 		return () => {
 			abort.abort();
 		};
-	}, [ dispatch, logout, userState.data ]);
+	}, [ dispatch, logout, semesters.data ]);
 
-	return userState;
+	return semesters;
 }
