@@ -18,7 +18,7 @@ const setToken: Reducer<AuthState['token']> = (state, { payload }) => {
 	state.isLoggedIn = !!payload;
 };
 
-const auth = createSlice({
+const authSlice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
@@ -26,4 +26,4 @@ const auth = createSlice({
 	},
 });
 
-export default auth;
+export default authSlice;

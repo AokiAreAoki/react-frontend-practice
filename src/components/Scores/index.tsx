@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import SemesterWithScore from "../../types/Semester";
+import { SemesterWithScore } from "../../types/Semester";
 import Flex from "../Flex";
 import Accordion from "../Accordion";
 import ScoreTable from "../ScoreTable";
@@ -25,15 +25,13 @@ const Scores: FC<Props> = ({
 				}}
 				onClick={() => setOpen(prev => !prev)}
 			>
-				<b>{semester.number}{postfix(Number(semester.number))} semester</b>
+				<b>{postfix(Number(semester.number))} semester</b>
 			</Flex>}
 		>
-			<Flex style={{ paddingBottom: '16px', paddingRight: '16px' }}>
-				{ semester.scores.length === 0
-					? 'No records'
-					: <ScoreTable scores={semester.scores} />
-				}
-			</Flex>
+			{semester.scores.length === 0
+				? 'No records'
+				: <ScoreTable scores={semester.scores} />
+			}
 		</Accordion>
 	);
 };

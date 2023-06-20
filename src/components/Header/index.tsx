@@ -1,13 +1,15 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useMemo, useState } from "react";
 import Flex from "../../components/Flex";
 import useUserData from "../../hooks/useUserData";
 import Loading from '../../components/Loading';
 import Button from "../Button";
-import useLogout from "../../hooks/useLogout";
+import Logout from "../Logout";
 import styled from "styled-components";
 import { RegisterOwnGrades } from "../../pages/Home/pages/OwnGrades";
 import { RegisterOthersGrades } from "../../pages/Home/pages/OthersGrades";
 import { RegisterSemesterManagement } from "../../pages/Home/pages/SemesterManagement";
+import { useTypedDispatch, useTypedSelector } from "../../redux";
+import tabSlice from "../../redux/slices/tabs";
 
 const StyledFlex = styled(Flex)`
 	padding-inline: 20px;
@@ -16,7 +18,9 @@ const StyledFlex = styled(Flex)`
 `;
 
 const Header: FC = () => {
-	const logout = useLogout();
+	const dispatch = useTypedDispatch();
+	const tabs = useTypedSelector(state => state.tabs);
+
 	const {
 		loading,
 		data,
@@ -47,13 +51,24 @@ const Header: FC = () => {
 				{hasGrades && <RegisterOwnGrades />}
 				{canSeeOthersGrades && <RegisterOthersGrades />}
 				{canEditSemesters && <RegisterSemesterManagement />}
+
+				{tabs.list.map(tab => {
+					return (
+						<Button
+							key={tab.key}
+							color='primary'
+							variant={tabs.active === tab.key ? 'solid' : 'outline'}
+							onClick={() => {
+								dispatch(tabSlice.actions.setActiveTab(tab.key));
+							}}
+						>
+							{tab.name}
+						</Button>
+					);
+				})}
 			</Flex>
 
-			<Flex dir="row" gap="10px" align="center">
-				<Button variant="secondary" onClick={logout}>
-					Log out
-				</Button>
-			</Flex>
+			<Logout />
 		</StyledFlex>
 	);
 };

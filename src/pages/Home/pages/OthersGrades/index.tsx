@@ -1,51 +1,44 @@
 import React, { FC, useEffect } from "react";
-import useOwnScores from "../../../../hooks/useOwnScores";
-import Grades from "../Grades";
-import tabs, { Tab } from "../../../../redux/slices/tabs";
-import { useTypedDispatch, useTypedSelector } from "../../../../redux";
-import Button from "../../../../components/Button";
+import useStudents from "../../../../hooks/useStudents";
+import Grades from "../../components/Grades";
+import tabSlice, { Tab } from "../../../../redux/slices/tabs";
+import { useTypedDispatch } from "../../../../redux";
+import Loading from "../../../../components/Loading";
 
 export const othersGradesTab: Tab = {
 	key: 'scores',
 	name: `Students' scores`,
-	path: '/scores',
 };
 
 export const RegisterOthersGrades: FC = () => {
 	const dispatch = useTypedDispatch();
-	const active = useTypedSelector(state => state.tabs.active);
 
 	useEffect(() => {
-		dispatch(tabs.actions.addTab(othersGradesTab));
+		dispatch(tabSlice.actions.addTab(othersGradesTab));
 
 		return () => {
-			dispatch(tabs.actions.removeTab(othersGradesTab.path));
+			dispatch(tabSlice.actions.removeTab(othersGradesTab.key));
 		};
 	}, [ dispatch ]);
 
-	return <Button
-		variant={active === othersGradesTab.key ? 'primary' : 'secondary'}
-		onClick={() => {
-			dispatch(tabs.actions.setActiveTab(othersGradesTab.key));
-		}}
-	>
-		{othersGradesTab.name}
-	</Button>;
+	return <></>;
 };
 
 const OthersGrades: FC = () => {
 	const {
 		loading,
-		semesters,
-	} = useOwnScores();
+		refresh,
+		students,
+	} = useStudents();
 
-	return (
-		<Grades
+	const semesters = [];
+
+	return loading
+		? <Loading />
+		: <Grades
 			title="Someone's Scores"
-			loading={loading}
 			semesters={semesters}
-		/>
-	);
+		/>;
 };
 
 export default OthersGrades;

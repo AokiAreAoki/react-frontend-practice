@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
-import user from "../redux/slices/user";
+import userSlice from "../redux/slices/user";
 import useLogout from "./useLogout";
 
 export default function useUserData(){
@@ -14,7 +14,7 @@ export default function useUserData(){
 			return;
 
 		const abort = new AbortController();
-		dispatch(user.actions.setLoading(true));
+		dispatch(userSlice.actions.setLoading(true));
 
 		API.getUser({ abort })
 			.then(async data => {
@@ -30,8 +30,8 @@ export default function useUserData(){
 				if(!success)
 					return;
 
-				dispatch(user.actions.setLoading(false));
-				dispatch(user.actions.setUserData(response.data));
+				dispatch(userSlice.actions.setLoading(false));
+				dispatch(userSlice.actions.setUserData(response.data));
 			});
 
 		return () => {

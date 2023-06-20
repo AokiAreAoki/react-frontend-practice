@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useTypedDispatch } from "../redux";
 import API from "../services/API";
-import auth from "../redux/slices/auth";
+import authSlice from "../redux/slices/auth";
 
 export default function useLogout(){
 	const dispatch = useTypedDispatch();
@@ -12,7 +12,7 @@ export default function useLogout(){
 		API.logout({ abort })
 			.then(({ success }) => {
 				if(success)
-					dispatch(auth.actions.setToken(null));
+					dispatch(authSlice.actions.setToken(null));
 			});
 
 		return () => {

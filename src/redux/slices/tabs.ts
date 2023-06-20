@@ -4,7 +4,6 @@ import { createSlice, CaseReducer, PayloadAction } from "@reduxjs/toolkit";
 export interface Tab {
 	key: string
 	name: string
-	path: string
 }
 
 interface TabState {
@@ -31,11 +30,11 @@ const addTab: Reducer<Tab> = (state, { payload }) => {
 	state.list.push(payload);
 };
 
-const removeTab: Reducer<Tab['path']> = (state, { payload }) => {
-	state.list = state.list.filter(t => t.path === payload);
+const removeTab: Reducer<Tab['key']> = (state, { payload }) => {
+	state.list = state.list.filter(t => t.key === payload);
 };
 
-const tabs = createSlice({
+const tabSlice = createSlice({
 	name: "tabs",
 	initialState,
 	reducers: {
@@ -46,4 +45,4 @@ const tabs = createSlice({
 	},
 });
 
-export default tabs;
+export default tabSlice;

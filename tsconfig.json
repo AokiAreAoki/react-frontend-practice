@@ -3,8 +3,7 @@
     "src/**/*.ts",
     "src/**/*.js",
     "src/App.tsx",
-    "src/index.tsx",
-    "src/components/Semesters/index.tsx"
+    "src/index.tsx"
   ],
   "exclude": [
     "node_modules",

@@ -62,6 +62,9 @@ const StyledAccordion = styled.div<StyledAccordionProps>`
 		display: ${props => props.open ? 'inherit' : 'none'};
 		overflow: hidden;
 		grid-area: body;
+
+		padding-right: 16px;
+		padding-bottom: 16px;
 	}
 `;
 

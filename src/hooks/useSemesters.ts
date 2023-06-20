@@ -1,22 +1,23 @@
 import { useEffect } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
-import user from "../redux/slices/user";
-import useLogout from "./useLogout";
+import semesterSlice from "../redux/slices/semesters";
 
 export default function useSemesters(){
 	const dispatch = useTypedDispatch();
-	const semesters = useTypedSelector(state => state.semesters);
-	const logout = useLogout();
+	const {
+		loading,
+		data,
+	} = useTypedSelector(state => state.semesters);
 
 	useEffect(() => {
-		if(semesters.data)
+		if(data)
 			return;
 
 		const abort = new AbortController();
-		dispatch(user.actions.setLoading(true));
+		dispatch(semesterSlice.actions.setLoading(true));
 
-		API.getUser({ abort })
+		API.getSemesters({ abort })
 			.then(async data => {
 				if(data.success)
 					return data;
@@ -24,20 +25,23 @@ export default function useSemesters(){
 				// Retry in a bit
 				await new Promise(resolve => setTimeout(resolve, 2e3));
 
-				return API.getUser({ abort });
+				return API.getSemesters({ abort });
 			})
 			.then(({ success, response }) => {
 				if(!success)
 					return;
 
-				dispatch(user.actions.setLoading(false));
-				dispatch(user.actions.setUserData(response.data));
+				dispatch(semesterSlice.actions.setLoading(false));
+				dispatch(semesterSlice.actions.setData(response.data));
 			});
 
 		return () => {
 			abort.abort();
 		};
-	}, [ dispatch, logout, semesters.data ]);
+	}, [ dispatch, data ]);
 
-	return semesters;
+	return {
+		loading,
+		semesters: data || [],
+	};
 }

@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
-import scores from "../redux/slices/scores";
+import ownScoreSlice from "../redux/slices/scores/own";
 
 export default function useOwnScores(){
 	const dispatch = useTypedDispatch();
@@ -15,14 +15,14 @@ export default function useOwnScores(){
 	const abort = useRef(new AbortController());
 
 	const fetchOwnScores = useCallback(() => {
-		dispatch(scores.actions.setLoading(true));
+		dispatch(ownScoreSlice.actions.setLoading(true));
 
 		return API.getOwnScores({ abort: abort.current })
 			.then(context => {
-				dispatch(scores.actions.setLoading(false));
+				dispatch(ownScoreSlice.actions.setLoading(false));
 
 				if(context.success)
-					dispatch(scores.actions.setSemesters(context.response.data));
+					dispatch(ownScoreSlice.actions.setSemesters(context.response.data));
 
 				return context;
 			});
@@ -38,21 +38,22 @@ export default function useOwnScores(){
 		if(upToDate)
 			return;
 
-		dispatch(scores.actions.setUpToDate(true));
-		dispatch(scores.actions.setLoading(true));
+		dispatch(ownScoreSlice.actions.setUpToDate(true));
+		dispatch(ownScoreSlice.actions.setLoading(true));
 
 		fetchOwnScores().then(({ success }) => {
 			if(success)
 				return;
 
 			setTimeout(() => {
-				dispatch(scores.actions.setUpToDate(false));
+				dispatch(ownScoreSlice.actions.setUpToDate(false));
 			}, 2e3);
 		});
 	}, [ dispatch, upToDate ]);
 
 	return {
 		loading,
+		refresh: fetchOwnScores,
 		semesters,
 	};
 }

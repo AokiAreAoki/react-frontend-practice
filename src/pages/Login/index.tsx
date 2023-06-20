@@ -5,7 +5,7 @@ import Frame from "../../components/Frame";
 import Button from "../../components/Button";
 import API from "../../services/API";
 import { useTypedDispatch, useTypedSelector } from "../../redux";
-import auth from "../../redux/slices/auth";
+import authSlice from "../../redux/slices/auth";
 import { Navigate } from "react-router-dom";
 
 const LoginPage: FC = () => {
@@ -32,7 +32,7 @@ const LoginPage: FC = () => {
 		})
 			.then(({ success, response }) => {
 				if(success)
-					dispatch(auth.actions.setToken(response.data.token));
+					dispatch(authSlice.actions.setToken(response.data.token));
 			});
 	}, [ uid, password, dispatch ]);
 

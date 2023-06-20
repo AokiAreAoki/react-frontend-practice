@@ -1,20 +1,22 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
-import storage from "redux-persist/lib/storage";
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import storage from "redux-persist/lib/storage";
 
-import auth from './slices/auth';
-import user from './slices/user';
-import scores from './slices/scores';
-import tabs from './slices/tabs';
-import semesters from './slices/semesters';
+import authSlice from './slices/auth';
+import userSlice from './slices/user';
+import tabSlice from './slices/tabs';
+import semesterSlice from './slices/semesters';
+import ownScoreSlice from './slices/scores/own';
+import othersScoreSlice from './slices/scores/others';
 
 const rootReducer = combineReducers({
-	auth: auth.reducer,
-	user: user.reducer,
-	tabs: tabs.reducer,
-	ownScores: scores.reducer,
-	semesters: semesters.reducer,
+	auth: authSlice.reducer,
+	user: userSlice.reducer,
+	tabs: tabSlice.reducer,
+	semesters: semesterSlice.reducer,
+	ownScores: ownScoreSlice.reducer,
+	othersScores: othersScoreSlice.reducer,
 });
 
 const persistedReducer = persistReducer({

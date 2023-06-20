@@ -2,15 +2,15 @@
 export default function postfix(number: number){
 	switch(number){
 		case 1:
-			return 'st';
+			return number + 'st';
 
 		case 2:
-			return 'nd';
+			return number + 'nd';
 
 		case 3:
-			return 'rd';
+			return number + 'rd';
 
 		default:
-			return 'th';
+			return number + 'th';
 	}
 }

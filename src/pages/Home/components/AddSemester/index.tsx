@@ -4,7 +4,7 @@ import Flex from "../../../../components/Flex";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
 import postfix from "../../../../utils/postfix";
-import SemesterWithScore from "../../../../types/Semester";
+import { SemesterWithScore } from "../../../../types/Semester";
 import useRefreshScores from "../../../../hooks/useRefreshScores";
 
 interface Props {
@@ -38,13 +38,13 @@ const AddYear: FC<Props> = ({
 	return (
 		<>
 			<Flex dir="row" justify="end">
-				<Button variant="secondary" onClick={() => setShowModal(true)}>Add semester</Button>
+				<Button color="secondary" onClick={() => setShowModal(true)}>Add semester</Button>
 			</Flex>
 
 			<Modal open={showModal}>
 				<Flex gap="15px" style={{ padding: "15px" }}>
 					<Flex wrap>
-						Are you sure you want to create {nextSemester}{postfix(nextSemester)} semester?
+						Are you sure you want to create {postfix(nextSemester)} semester?
 					</Flex>
 
 					<Flex dir="row" gap="15px" justify="end">

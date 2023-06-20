@@ -1,24 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, CaseReducer, PayloadAction } from "@reduxjs/toolkit";
-
-interface UserData {
-	id: number
-	name: string
-	surname: string | null
-	email: string | null
-	role: {
-		id: number
-		name: string
-		hasGrades: boolean
-		canSeeOthersGrades: boolean
-		canEditGrades: boolean
-		canEditSemesters: boolean
-	}
-}
+import { UserWithRole } from "../../types/User";
 
 export interface UserState {
 	loading: boolean
-	data?: UserData
+	data?: UserWithRole
 }
 
 const initialState: UserState = {
@@ -35,7 +21,7 @@ const setUserData: Reducer<UserState['data']> = (state, { payload }) => {
 	state.data = payload;
 };
 
-const user = createSlice({
+const userSlice = createSlice({
 	name: "user",
 	initialState,
 	reducers: {
@@ -44,4 +30,4 @@ const user = createSlice({
 	},
 });
 
-export default user;
+export default userSlice;

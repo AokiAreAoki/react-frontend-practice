@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
-import Flex from "../../components/Flex";
-import Accordion from "../../components/Accordion";
-import Scores from "../../components/Scores";
+import Flex from "../Flex";
+import Accordion from "../Accordion";
+import Scores from "../Scores";
 import { SemesterWithScore } from "../../types/Semester";
 import postfix from "../../utils/postfix";
 
@@ -11,7 +11,7 @@ interface Props {
 	semesters: SemesterWithScore[]
 }
 
-const Semesters: FC<Props> = ({
+const SemestersWithScores: FC<Props> = ({
 	year,
 	semesters,
 }) => {
@@ -29,17 +29,15 @@ const Semesters: FC<Props> = ({
 					}}
 					onClick={() => setOpen(prev => !prev)}
 				>
-					<b>{year}{postfix(Number(year))} year</b>
+					<b>{postfix(Number(year))} year</b>
 				</Flex>
 			}
 		>
-			<Flex gap="16px" style={{ paddingBottom: '16px', paddingRight: '16px' }}>
-				{semesters.map((semester) => (
-					<Scores key={semester.id} semester={semester} />
-				))}
-			</Flex>
+			{semesters.map((semester) => (
+				<Scores key={semester.id} semester={semester} />
+			))}
 		</Accordion>
 	);
 };
 
-export default Semesters;
+export default SemestersWithScores;

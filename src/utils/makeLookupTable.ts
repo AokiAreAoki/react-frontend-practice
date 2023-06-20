@@ -1,20 +1,30 @@
 
+interface Wrapper<K, V> {
+	key: K
+	value: V
+}
+
 export default function makeLookupTable<T, K extends number | string | symbol, U extends boolean | undefined>(
 	items: T[],
-	key: (item: T) => K,
+	getKey: (item: T) => K,
 	keyIsUnique: U,
 ) {
-	const lookup = {} as Record<K, T | T[]>;
+	type Lookup<U2 extends boolean = boolean> = Partial<Record<K, Wrapper<K, U2 extends true ? T : T[]>>>;
+	const lookup: Lookup = {};
 
 	if(keyIsUnique)
 		items.forEach(item => {
-			lookup[key(item)] = item;
+			const key = getKey(item);
+			lookup[key] = { key, value: item };
 		});
 	else
 		items.forEach(item => {
-			lookup[key(item)] ??= []
-			;(lookup[key(item)] as T[]).push(item);
+			const key = getKey(item);
+			lookup[key] ??= { key, value: [] };
+
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			(lookup as Lookup<false>)[key]!.value.push(item);
 		});
 
-	return lookup as Record<K, U extends true ? T : T[]>;
+	return lookup as Record<K | string, Wrapper<K, U extends true ? T : T[]>>;
 }

@@ -6,6 +6,7 @@ import OthersGrades, { othersGradesTab } from "./pages/OthersGrades";
 import { useTypedDispatch, useTypedSelector } from "../../redux";
 import useUserData from "../../hooks/useUserData";
 import Loading from "../../components/Loading";
+import Display from "../../components/Display";
 import tabSlice from "../../redux/slices/tabs";
 import SemesterManagement, { semesterManagementTab } from "./pages/SemesterManagement";
 
@@ -35,9 +36,7 @@ const HomePage: FC = () => {
 			<Flex
 				grow
 				overflow
-				dir="row"
-				justify="center"
-				align="stretch"
+				// align="stretch"
 				style={{
 					paddingInline: "30px",
 					paddingBlock: "10px",
@@ -46,9 +45,15 @@ const HomePage: FC = () => {
 				{loading
 					? <Loading />
 					: <>
-						{activeTab === ownGradesTab.key && <OwnGrades />}
-						{activeTab === othersGradesTab.key && <OthersGrades />}
-						{activeTab === semesterManagementTab.key && <SemesterManagement />}
+						<Display display={activeTab === ownGradesTab.key}>
+							<OwnGrades />
+						</Display>
+						<Display display={activeTab === othersGradesTab.key}>
+							<OthersGrades />
+						</Display>
+						<Display display={activeTab === semesterManagementTab.key}>
+							<SemesterManagement />
+						</Display>
 					</>
 				}
 			</Flex>

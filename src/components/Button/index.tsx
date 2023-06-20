@@ -2,7 +2,8 @@ import React, { FC, PropsWithChildren, useMemo } from "react";
 import styled from "styled-components";
 import { theme } from "../../assets/theme";
 
-type Variant = 'primary' | 'secondary';
+type Color = 'primary' | 'secondary' | 'negative';
+type Variant = 'solid' | 'outline' ;
 
 const BaseStyledButton = styled.button`
 	cursor: pointer;
@@ -12,50 +13,65 @@ const BaseStyledButton = styled.button`
 	border-radius: 8px;
 	padding-inline: 15px;
 	padding-block: 10px;
+
+	&:hover {
+		text-decoration: underline;
+	}
 `;
 
 const width = 2;
 
-const PrimaryStyledButton = styled(BaseStyledButton)`
+interface StyledButtonProps {
+	color: string
+}
+
+const SolidStyledButton = styled(BaseStyledButton)<StyledButtonProps>`
 	color: white;
-	background-color: ${ theme.colors.primary };
+	background-color: ${ ({ color }) => color };
 `;
 
-const SecondaryStyledButton = styled(BaseStyledButton)`
-	color: ${ theme.colors.primary };
-	background-color: white;
-	outline: ${width}px solid ${ theme.colors.primary };
+const TransparentStyledButton = styled(BaseStyledButton)<StyledButtonProps>`
+	color: ${ ({ color }) => color };
+	background-color: transparent;
+	outline: ${width}px solid ${ ({ color }) => color };
 	outline-offset: -${width}px;
 `;
 
-function getButtonVariant(variant?: Variant){
+function getColor(variant: Color | undefined){
 	switch (variant) {
 		default:
 		case 'primary':
-			return PrimaryStyledButton;
+			return theme.colors.primary;
 
 		case 'secondary':
-			return SecondaryStyledButton;
+			return theme.colors.secondary;
+
+		case 'negative':
+			return theme.colors.negative;
 	}
 }
 
 interface Props extends PropsWithChildren {
+	color?: Color
 	variant?: Variant
 	onClick?: () => void
 }
 
 const Button: FC<Props> = ({
-	variant,
-	onClick,
-	children,
+	color,
+	variant = 'solid',
+	...props
 }) => {
-	const ButtonVariant = useMemo(() => getButtonVariant(variant), [ variant ]);
+	const resolvedColor = useMemo(() => getColor(color), [ color ]);
 
-	return (
-		<ButtonVariant onClick={onClick}>
-			{children}
-		</ButtonVariant>
-	);
+	switch(variant){
+		default:
+		case "solid":
+			return <SolidStyledButton color={resolvedColor} {...props} />;
+
+		case "outline":
+			return <TransparentStyledButton color={resolvedColor} {...props} />;
+	}
 };
 
 export default Button;

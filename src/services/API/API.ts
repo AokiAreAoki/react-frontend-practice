@@ -110,10 +110,7 @@ class API {
 		}, true);
 	}
 
-	async getSemesters(options: {
-		number: number
-		year: number
-	} & BaseRequestOptions) {
+	async getSemesters(options: BaseRequestOptions) {
 		return await this.request({
 			method: 'get',
 			url: '/api/v1/semesters/list',
