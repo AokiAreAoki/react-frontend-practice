@@ -1,0 +1,26 @@
+{
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/App.tsx",
+    "src/index.tsx",
+    "src/components/Semesters/index.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ],
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "checkJs": true,
+    "module": "ES6",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "moduleResolution": "nodenext",
+    "resolveJsonModule": true,
+    "outDir": "build",
+    "rootDir": "./",
+    "baseUrl": "./",
+    "sourceMap": true,
+  },
+}
