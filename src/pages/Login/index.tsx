@@ -17,14 +17,10 @@ const LoginPage: FC = () => {
 
 	const abort = useRef<AbortController>(new AbortController());
 
-	useEffect(() => {
-		return () => {
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			abort.current.abort();
-		};
-	}, []);
-
 	const submit = useCallback(() => {
+		abort.current.abort();
+		abort.current = new AbortController();
+
 		API.auth({
 			uid,
 			password,
@@ -35,6 +31,13 @@ const LoginPage: FC = () => {
 					dispatch(authSlice.actions.setToken(response.data.token));
 			});
 	}, [ uid, password, dispatch ]);
+
+	useEffect(() => {
+		return () => {
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+			abort.current.abort();
+		};
+	}, []);
 
 	return isLoggedIn
 		? <Navigate to="/home" />

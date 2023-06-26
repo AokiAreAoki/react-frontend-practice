@@ -1,30 +1,30 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
-import semesterSlice from "../redux/slices/semesters";
+import userSlice from "../redux/slices/user";
 
-export default function useSemesters(){
+export default function useUser(){
 	const dispatch = useTypedDispatch();
 	const {
 		upToDate,
 		loading,
 		data,
-	} = useTypedSelector(state => state.semesters);
+	} = useTypedSelector(state => state.user);
 
 	const abort = useRef(new AbortController());
 
-	const fetchSemesters = useCallback(() => {
-		dispatch(semesterSlice.actions.setLoading(true));
+	const fetchUser = useCallback(() => {
+		dispatch(userSlice.actions.setLoading(true));
 
 		abort.current.abort();
 		abort.current = new AbortController();
 
-		return API.getSemesters({ abort: abort.current })
+		return API.getUser({ abort: abort.current })
 			.then(context => {
-				dispatch(semesterSlice.actions.setLoading(false));
+				dispatch(userSlice.actions.setLoading(false));
 
 				if(context.success)
-					dispatch(semesterSlice.actions.setData(context.response.data));
+					dispatch(userSlice.actions.setUserData(context.response.data));
 
 				return context;
 			});
@@ -34,15 +34,15 @@ export default function useSemesters(){
 		if(upToDate)
 			return;
 
-		dispatch(semesterSlice.actions.setUpToDate(true));
+		dispatch(userSlice.actions.setUpToDate(true));
 
-		fetchSemesters().then(async ({ success, canceled }) => {
+		fetchUser().then(({ success, canceled }) => {
 			if(!success && !canceled)
 				setTimeout(() => {
-					dispatch(semesterSlice.actions.setUpToDate(false));
+					dispatch(userSlice.actions.setUpToDate(false));
 				}, 2e3);
 		});
-	}, [ dispatch, data, upToDate, fetchSemesters ]);
+	}, [ data, dispatch, fetchUser, upToDate ]);
 
 	useEffect(() => {
 		return () => {
@@ -53,6 +53,7 @@ export default function useSemesters(){
 
 	return {
 		loading,
-		semesters: data || [],
+		refresh: fetchUser,
+		user: data,
 	};
 }

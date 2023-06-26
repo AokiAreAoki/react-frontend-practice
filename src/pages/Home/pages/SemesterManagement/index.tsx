@@ -1,34 +1,32 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTypedDispatch, useTypedSelector } from "../../../../redux";
-import tabSlice, { Tab } from "../../../../redux/slices/tabs";
-import Button from "../../../../components/Button";
+import tabSlice, { RegisterTab, Tab } from "../../../../redux/slices/tabs";
 import Flex from "../../../../components/Flex";
-import AddYear from "../../components/AddYear";
-import AddSemester from "../../components/AddSemester";
 import useSemesters from "../../../../hooks/useSemesters";
 import SemesterControl from "./components/SemesterControl";
 import Loading from "../../../../components/Loading";
 import makeLookupTable from "../../../../utils/makeLookupTable";
-import Ruler from "../../../../components/Ruler";
 import postfix from "../../../../utils/postfix";
 import Accordion from "../../../../components/Accordion";
 
-export const semesterManagementTab: Tab = {
-	key: 'semesterManagement',
+export const semesterManagementTab: Omit<Tab, 'order'> = {
+	key: 'semester-management',
 	name: `Semester Management`,
 };
 
-export const RegisterSemesterManagement: FC = () => {
+export const RegisterSemesterManagement: RegisterTab = ({ order }) => {
 	const dispatch = useTypedDispatch();
-	const active = useTypedSelector(state => state.tabs.active);
 
 	useEffect(() => {
-		dispatch(tabSlice.actions.addTab(semesterManagementTab));
+		dispatch(tabSlice.actions.addTab({
+			...semesterManagementTab,
+			order,
+		}));
 
 		return () => {
 			dispatch(tabSlice.actions.removeTab(semesterManagementTab.key));
 		};
-	}, [ dispatch ]);
+	}, [ dispatch, order ]);
 
 	return <></>;
 };

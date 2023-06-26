@@ -138,7 +138,13 @@
         "no-unused-expressions": "off",
         "no-use-before-define": "off",
         "linebreak-style": "off",
-        "eqeqeq": "warn",
+        "eqeqeq": [
+            "error",
+            "always",
+            {
+                "null": "ignore"
+            }
+        ],
         "wrap-iife": "off",
         "no-underscore-dangle": "off",
         "implicit-arrow-linebreak": "off",

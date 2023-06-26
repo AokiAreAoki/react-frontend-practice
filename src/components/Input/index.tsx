@@ -1,20 +1,20 @@
 import React, { FC } from "react";
 
-interface Props {
+interface Props extends Omit<React.HTMLProps<HTMLInputElement>, 'value' | 'onChange' | 'onSubmit'> {
 	value: string;
 	onChange?: (value: string) => void;
 	onSubmit?: (value: string) => void;
-	type?: React.HTMLInputTypeAttribute
 }
 
 const Input: FC<Props> = ({
 	value,
 	onChange,
 	onSubmit,
-	type,
+	...props
 }) => {
 	return (
 		<input
+			{...props}
 			value={value}
 			onChange={e => {
 				onChange?.(e.target.value);
@@ -22,7 +22,6 @@ const Input: FC<Props> = ({
 			onSubmit={e => {
 				onSubmit?.(e.currentTarget.value);
 			}}
-			type={type}
 		/>
 	);
 };

@@ -1,6 +1,8 @@
 import axios from "axios";
+import Nullable from "../../types/Nullable";
+import Score, { EditableScoreParams } from "../../types/Score";
 
-type TokenResolver = () => string | null | undefined;
+type TokenResolver = () => Nullable<string>;
 
 interface Options {
 	baseURL: string
@@ -49,14 +51,29 @@ class API {
 		return this.axiosInstance(options)
 			.then(response => ({
 				success: true as const,
+				canceled: false as const,
 				response,
 				error: undefined,
 			}))
-			.catch((error: axios.AxiosError) => ({
-				success: false as const,
-				response: undefined,
-				error,
-			}));
+			.catch((error: axios.AxiosError) => {
+				if (error.code === `ERR_CANCELED`)
+					return {
+						success: false as const,
+						canceled: true as const,
+						response: undefined,
+						error: undefined,
+					};
+
+				console.log(`[API] Request Failed: ${options.method?.toUpperCase()} ${options.url} - ${error.message}`);
+				console.error(error);
+
+				return {
+					success: false as const,
+					canceled: false as const,
+					response: undefined,
+					error,
+				};
+			});
 	}
 
 	async auth({
@@ -110,6 +127,17 @@ class API {
 		}, true);
 	}
 
+	async updateScore(options: { score: Pick<Score, EditableScoreParams> } & BaseRequestOptions) {
+		return await this.request({
+			method: 'post',
+			url: '/api/v1/scores/update',
+			params: {
+				...options.score,
+			},
+			signal: options.abort?.signal,
+		}, true);
+	}
+
 	async getSemesters(options: BaseRequestOptions) {
 		return await this.request({
 			method: 'get',
@@ -129,6 +157,14 @@ class API {
 				number: options.number,
 				year: options.year,
 			},
+			signal: options.abort?.signal,
+		}, true);
+	}
+
+	async getStudents(options: BaseRequestOptions) {
+		return await this.request({
+			method: 'get',
+			url: '/api/v1/students/list',
 			signal: options.abort?.signal,
 		}, true);
 	}

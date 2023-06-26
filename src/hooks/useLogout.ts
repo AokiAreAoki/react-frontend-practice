@@ -7,17 +7,11 @@ export default function useLogout(){
 	const dispatch = useTypedDispatch();
 
 	const logout = useCallback(() => {
-		const abort = new AbortController();
-
-		API.logout({ abort })
+		API.logout({})
 			.then(({ success }) => {
 				if(success)
 					dispatch(authSlice.actions.setToken(null));
 			});
-
-		return () => {
-			abort.abort();
-		};
 	}, [ dispatch ]);
 
 	return logout;

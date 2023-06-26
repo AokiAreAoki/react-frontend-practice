@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useRef } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
@@ -17,6 +16,9 @@ export default function useOwnScores(){
 	const fetchOwnScores = useCallback(() => {
 		dispatch(ownScoreSlice.actions.setLoading(true));
 
+		abort.current.abort();
+		abort.current = new AbortController();
+
 		return API.getOwnScores({ abort: abort.current })
 			.then(context => {
 				dispatch(ownScoreSlice.actions.setLoading(false));
@@ -26,10 +28,11 @@ export default function useOwnScores(){
 
 				return context;
 			});
-	}, []);
+	}, [ dispatch ]);
 
 	useEffect(() => {
 		return () => {
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 			abort.current.abort();
 		};
 	}, []);
@@ -41,15 +44,13 @@ export default function useOwnScores(){
 		dispatch(ownScoreSlice.actions.setUpToDate(true));
 		dispatch(ownScoreSlice.actions.setLoading(true));
 
-		fetchOwnScores().then(({ success }) => {
-			if(success)
-				return;
-
-			setTimeout(() => {
-				dispatch(ownScoreSlice.actions.setUpToDate(false));
-			}, 2e3);
+		fetchOwnScores().then(({ success, canceled }) => {
+			if(!success && !canceled)
+				setTimeout(() => {
+					dispatch(ownScoreSlice.actions.setUpToDate(false));
+				}, 2e3);
 		});
-	}, [ dispatch, upToDate ]);
+	}, [ dispatch, fetchOwnScores, upToDate ]);
 
 	return {
 		loading,

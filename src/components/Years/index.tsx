@@ -1,24 +1,30 @@
-import React, { FC, useMemo } from "react";
+import React, { FC } from "react";
 import Flex from "../../components/Flex";
-import Semester from "../../types/Semester";
-import Semesters from "../../components/Semesters";
+import { SemesterWithScores } from "../../types/Semester";
+import SemestersWithScores from "../SemestersWithScores";
+import { Lookup } from "../../utils/makeLookupTable";
 
 interface Props {
-	years: Record<string, Semester[]>
+	years: Lookup<SemesterWithScores, number, false>
+	editable?: boolean
 }
 
 const Years: FC<Props> = ({
 	years,
+	editable = false,
 }) => {
 	return (
 		<Flex grow style={{ width: '100%' }}>
 			{Object
-				.keys(years)
-				.map(year => <Semesters
+				.values(years)
+				.map(({
+					key: year,
+					value: semester,
+				}) => <SemestersWithScores
 					key={year}
-					displayAddButton
 					year={Number(year)}
-					semesters={years[year]}
+					semesters={semester}
+					editable={editable}
 				/>)
 			}
 		</Flex>

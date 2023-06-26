@@ -8,12 +8,10 @@ const StyledDialog = styled.dialog`
 `;
 
 interface Props extends PropsWithChildren{
-	open: boolean
 	onClose?: () => void
 }
 
 const Modal: FC<Props> = ({
-	open,
 	onClose,
 	children,
 }) => {
@@ -26,11 +24,8 @@ const Modal: FC<Props> = ({
 	}, []);
 
 	useEffect(() => {
-		if(open)
-			ref.current?.showModal();
-		else
-			ref.current?.close();
-	}, [ open ]);
+		ref.current?.showModal();
+	}, []);
 
 	return (
 		<StyledDialog

@@ -1,10 +1,13 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, CaseReducer, PayloadAction } from "@reduxjs/toolkit";
+import { FC } from "react";
 
 export interface Tab {
+	order: number
 	key: string
 	name: string
 }
+export type RegisterTab = FC<{ order: number }>;
 
 interface TabState {
 	active: Tab['key'] | null
@@ -27,11 +30,22 @@ const setTabs: Reducer<TabState['list']> = (state, { payload }) => {
 };
 
 const addTab: Reducer<Tab> = (state, { payload }) => {
-	state.list.push(payload);
+	const index = state.list.findIndex(tab => tab.key === payload.key);
+
+	if(index === -1){
+		state.list.push(payload);
+		state.list.sort((a, b) => a.order - b.order);
+	} else {
+		state.list[index] = payload;
+	}
 };
 
 const removeTab: Reducer<Tab['key']> = (state, { payload }) => {
-	state.list = state.list.filter(t => t.key === payload);
+	// state.list = state.list.filter(t => t.key === payload);
+	const index = state.list.findIndex(tab => tab.key === payload);
+
+	if(index !== -1)
+		state.list.splice(index, 1);
 };
 
 const tabSlice = createSlice({

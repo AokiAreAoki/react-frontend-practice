@@ -1,14 +1,17 @@
 import React, { FC, useEffect } from "react";
+import { useTypedDispatch, useTypedSelector } from "../../redux";
+import tabSlice from "../../redux/slices/tabs";
+
 import Flex from "../../components/Flex";
 import Header from '../../components/Header';
-import OwnGrades, { ownGradesTab } from "./pages/OwnGrades";
-import OthersGrades, { othersGradesTab } from "./pages/OthersGrades";
-import { useTypedDispatch, useTypedSelector } from "../../redux";
-import useUserData from "../../hooks/useUserData";
 import Loading from "../../components/Loading";
 import Display from "../../components/Display";
-import tabSlice from "../../redux/slices/tabs";
-import SemesterManagement, { semesterManagementTab } from "./pages/SemesterManagement";
+import useUser from "../../hooks/useUser";
+
+import { useLocation, useNavigate } from "react-router-dom";
+import OwnGrades, { RegisterOwnGrades, ownGradesTab } from "./pages/OwnGrades";
+import OthersGrades, { RegisterOthersGrades, othersGradesTab } from "./pages/OthersGrades";
+import SemesterManagement, { RegisterSemesterManagement, semesterManagementTab } from "./pages/SemesterManagement";
 
 const HomePage: FC = () => {
 	const dispatch = useTypedDispatch();
@@ -17,12 +20,28 @@ const HomePage: FC = () => {
 		list: tabList,
 	} = useTypedSelector(state => state.tabs);
 
-	const { loading } = useUserData();
+	const { loading, user } = useUser();
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	const hasGrades = user?.role.hasGrades;
+	const canSeeOthersGrades = user?.role.canSeeOthersGrades;
+	const canEditSemesters = user?.role.canEditSemesters;
 
 	useEffect(() => {
-		if(!activeTab && tabList.length !== 0)
-			dispatch(tabSlice.actions.setActiveTab(tabList[0].key));
-	}, [ activeTab, dispatch, tabList ]);
+		const route = location.pathname.match(/[\w-]+$/)?.[0];
+
+		if(activeTab){
+			if(route !== activeTab)
+				navigate(`/home/${activeTab}`, { replace: true });
+		} else if(tabList.length !== 0){
+			const tab = tabList.find(t => t.key === route) || tabList[0];
+
+			dispatch(tabSlice.actions.setActiveTab(tab.key));
+		}
+	}, [ activeTab, dispatch, location.key, location.pathname, navigate, tabList ]);
+
+	let order = 0;
 
 	return (
 		<Flex
@@ -31,6 +50,10 @@ const HomePage: FC = () => {
 			overflow
 			align="stretch"
 		>
+			{hasGrades && <RegisterOwnGrades order={++order} />}
+			{canSeeOthersGrades && <RegisterOthersGrades order={++order} />}
+			{/* {canEditSemesters && <RegisterSemesterManagement order={++order} />} */}
+
 			<Header />
 
 			<Flex

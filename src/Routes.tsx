@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useMemo } from "react";
 import {
 	Routes,
 	Route,
@@ -21,19 +21,28 @@ const AppRoutes: FC = () => {
 			navigate('/login');
 	}, [ isLoggedIn, navigate ]);
 
+	const redirect = useMemo(() => {
+		return <Navigate to={isLoggedIn
+			? "/home"
+			: "/login"
+		} />;
+	}, [ isLoggedIn ]);
+
 	return (
 		<Routes>
 			<Route
 				path="/"
-				element={
-					<Navigate to={isLoggedIn
-						? "/home"
-						: "/login"
-					} />
-				}
+				element={redirect}
 			/>
-			<Route path="/home" element={<HomePage />} />
-			<Route path="/login" element={<LoginPage />} />
+			<Route path="/home/*" element={isLoggedIn
+				? <HomePage />
+				: redirect
+			} />
+			<Route path="/login" element={isLoggedIn
+				? redirect
+				: <LoginPage />
+			} />
+
 			<Route path="*" element={<NotFound />} />
 		</Routes>
 	);

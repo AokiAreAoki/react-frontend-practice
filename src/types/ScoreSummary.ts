@@ -1,7 +1,7 @@
-import { SemesterWithScore } from "./Semester";
+import { SemesterWithScores } from "./Semester";
 
 interface ScoreSummary {
-	semesters: SemesterWithScore[]
+	semesters: SemesterWithScores[]
 }
 
 export default ScoreSummary;

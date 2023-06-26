@@ -9,6 +9,7 @@ import tabSlice from './slices/tabs';
 import semesterSlice from './slices/semesters';
 import ownScoreSlice from './slices/scores/own';
 import othersScoreSlice from './slices/scores/others';
+import studentSlice from './slices/students';
 
 const rootReducer = combineReducers({
 	auth: authSlice.reducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
 	semesters: semesterSlice.reducer,
 	ownScores: ownScoreSlice.reducer,
 	othersScores: othersScoreSlice.reducer,
+	students: studentSlice.reducer,
 });
 
 const persistedReducer = persistReducer({

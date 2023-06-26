@@ -3,15 +3,21 @@ import { createSlice, CaseReducer, PayloadAction } from "@reduxjs/toolkit";
 import { UserWithRole } from "../../types/User";
 
 export interface UserState {
+	upToDate: boolean
 	loading: boolean
 	data?: UserWithRole
 }
 
 const initialState: UserState = {
+	upToDate: false,
 	loading: true,
 };
 
 type Reducer<P> = CaseReducer<UserState, PayloadAction<P>>;
+
+const setUpToDate: Reducer<UserState['upToDate']> = (state, { payload }) => {
+	state.upToDate = payload;
+};
 
 const setLoading: Reducer<UserState['loading']> = (state, { payload }) => {
 	state.loading = payload;
@@ -25,6 +31,7 @@ const userSlice = createSlice({
 	name: "user",
 	initialState,
 	reducers: {
+		setUpToDate,
 		setLoading,
 		setUserData,
 	},

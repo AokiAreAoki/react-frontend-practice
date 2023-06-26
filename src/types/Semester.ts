@@ -6,6 +6,6 @@ export interface Semester {
 	number: number;
 }
 
-export interface SemesterWithScore extends Semester {
+export interface SemesterWithScores extends Semester {
 	scores: Score[]
 }

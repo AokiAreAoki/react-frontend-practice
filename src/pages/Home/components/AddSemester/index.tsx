@@ -4,19 +4,20 @@ import Flex from "../../../../components/Flex";
 import Button from "../../../../components/Button";
 import Modal from "../../../../components/Modal";
 import postfix from "../../../../utils/postfix";
-import { SemesterWithScore } from "../../../../types/Semester";
-import useRefreshScores from "../../../../hooks/useRefreshScores";
+import { SemesterWithScores } from "../../../../types/Semester";
+import useOwnScores from "../../../../hooks/useOwnScores";
+import Prompt from "../../../../components/Prompt";
 
 interface Props {
 	year: number
-	semesters: SemesterWithScore[]
+	semesters: SemesterWithScores[]
 }
 
 const AddYear: FC<Props> = ({
 	year,
 	semesters,
 }) => {
-	const refresh = useRefreshScores();
+	const { refresh } = useOwnScores();
 	const [ showModal, setShowModal ] = useState(false);
 
 	const nextSemester = useMemo(() => {
@@ -38,24 +39,18 @@ const AddYear: FC<Props> = ({
 	return (
 		<>
 			<Flex dir="row" justify="end">
-				<Button color="secondary" onClick={() => setShowModal(true)}>Add semester</Button>
+				<Button variant="outline" color="primary" onClick={() => setShowModal(true)}>Add semester</Button>
 			</Flex>
 
-			<Modal open={showModal}>
-				<Flex gap="15px" style={{ padding: "15px" }}>
-					<Flex wrap>
-						Are you sure you want to create {postfix(nextSemester)} semester?
-					</Flex>
-
-					<Flex dir="row" gap="15px" justify="end">
-						<Button onClick={() => {
-							setShowModal(false);
-							addYear();
-						}}>Create</Button>
-						<Button onClick={() => setShowModal(false)}>Cancel</Button>
-					</Flex>
-				</Flex>
-			</Modal>
+			{showModal && <Prompt
+				onConfirm={() => {
+					setShowModal(false);
+					addYear();
+				}}
+				onCancel={() => setShowModal(false)}
+			>
+				Are you sure you want to create {postfix(nextSemester)} semester?
+			</Prompt>}
 		</>
 	);
 };

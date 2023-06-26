@@ -2,24 +2,27 @@ import React, { FC, useEffect } from "react";
 import useOwnScores from "../../../../hooks/useOwnScores";
 import Grades from "../../components/Grades";
 import { useTypedDispatch } from "../../../../redux";
-import tabSlice, { Tab } from "../../../../redux/slices/tabs";
+import tabSlice, { RegisterTab, Tab } from "../../../../redux/slices/tabs";
 import Loading from "../../../../components/Loading";
 
-export const ownGradesTab: Tab = {
-	key: 'ownScores',
+export const ownGradesTab: Omit<Tab, 'order'> = {
+	key: 'own-scores',
 	name: `My scores`,
 };
 
-export const RegisterOwnGrades: FC = () => {
+export const RegisterOwnGrades: RegisterTab = ({ order }) => {
 	const dispatch = useTypedDispatch();
 
 	useEffect(() => {
-		dispatch(tabSlice.actions.addTab(ownGradesTab));
+		dispatch(tabSlice.actions.addTab({
+			...ownGradesTab,
+			order,
+		}));
 
 		return () => {
 			dispatch(tabSlice.actions.removeTab(ownGradesTab.key));
 		};
-	}, [ dispatch ]);
+	}, [ dispatch, order ]);
 
 	return <></>;
 };
@@ -32,10 +35,7 @@ const OwnGrades: FC = () => {
 
 	return loading
 		? <Loading />
-		: <Grades
-			title="My Scores"
-			semesters={semesters}
-		/>;
+		: <Grades semesters={semesters} />;
 };
 
 export default OwnGrades;
