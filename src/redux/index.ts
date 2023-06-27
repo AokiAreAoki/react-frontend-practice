@@ -7,8 +7,8 @@ import authSlice from './slices/auth';
 import userSlice from './slices/user';
 import tabSlice from './slices/tabs';
 import semesterSlice from './slices/semesters';
-import ownScoreSlice from './slices/scores/own';
-import othersScoreSlice from './slices/scores/others';
+import ownScoreSlice from './slices/ownScores';
+import othersScoreSlice from './slices/othersScores';
 import studentSlice from './slices/students';
 
 const rootReducer = combineReducers({

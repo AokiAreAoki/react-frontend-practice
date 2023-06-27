@@ -1,10 +1,15 @@
 /* eslint-disable no-param-reassign */
-import { CaseReducer, PayloadAction } from "@reduxjs/toolkit";
-import ScoreState from "./ScoreState";
+import { CaseReducer, PayloadAction, createSlice } from "@reduxjs/toolkit";
+import ScoreSummary from "../../types/ScoreSummary";
+
+interface ScoreState extends ScoreSummary {
+	upToDate: boolean
+	loading: boolean
+}
 
 const initialState: ScoreState = {
 	upToDate: false,
-	loading: true,
+	loading: false,
 	semesters: [],
 };
 
@@ -22,14 +27,14 @@ const setSemesters: Reducer<ScoreState['semesters']> = (state, { payload }) => {
 	state.semesters = payload;
 };
 
-const baseScoreSlice = {
-	name: "scores",
+const ownScoreSlice = createSlice({
+	name: "ownScores",
 	initialState,
 	reducers: {
 		setUpToDate,
 		setLoading,
 		setSemesters,
 	},
-};
+});
 
-export default baseScoreSlice;
+export default ownScoreSlice;

@@ -10,7 +10,7 @@ interface StudentState {
 
 const initialState: StudentState = {
 	upToDate: false,
-	loading: true,
+	loading: false,
 };
 
 type Reducer<P> = CaseReducer<StudentState, PayloadAction<P>>;

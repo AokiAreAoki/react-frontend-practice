@@ -2,8 +2,9 @@ import { useCallback, useEffect, useRef } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
 import studentSlice from "../redux/slices/students";
+import useDebouncedCallback from "./useDebouncedCallback";
 
-export default function useStudents(doNotFetch = false){
+export default function useStudents(doNotFetch = false) {
 	const dispatch = useTypedDispatch();
 	const {
 		upToDate,
@@ -13,25 +14,35 @@ export default function useStudents(doNotFetch = false){
 
 	const abort = useRef(new AbortController());
 
-	const fetchStudents = useCallback(() => {
-		if(doNotFetch)
+	const fetchStudents = useDebouncedCallback(() => {
+		if (doNotFetch)
 			return;
-
-		dispatch(studentSlice.actions.setLoading(true));
 
 		abort.current.abort();
 		abort.current = new AbortController();
 
-		return API.getStudents({ abort: abort.current })
-			.then(context => {
+		dispatch(studentSlice.actions.setLoading(true));
+
+		API.getStudents({ abort: abort.current })
+			.then(({ success, response, canceled }) => {
 				dispatch(studentSlice.actions.setLoading(false));
 
-				if(context.success)
-					dispatch(studentSlice.actions.setData(context.response.data));
-
-				return context;
+				if (success) {
+					dispatch(studentSlice.actions.setUpToDate(true));
+					dispatch(studentSlice.actions.setData(response.data));
+				} else if (!canceled)
+					setTimeout(() => {
+						dispatch(studentSlice.actions.setUpToDate(false));
+					}, 2e3);
 			});
-	}, [ dispatch, doNotFetch ]);
+	}, 200);
+
+	useEffect(() => {
+		if (upToDate || loading)
+			return;
+
+		fetchStudents();
+	}, [ dispatch, fetchStudents, loading, upToDate ]);
 
 	useEffect(() => {
 		return () => {
@@ -39,21 +50,6 @@ export default function useStudents(doNotFetch = false){
 			abort.current.abort();
 		};
 	}, []);
-
-	useEffect(() => {
-		if(upToDate)
-			return;
-
-		dispatch(studentSlice.actions.setUpToDate(true));
-		dispatch(studentSlice.actions.setLoading(true));
-
-		fetchStudents()?.then(({ success, canceled }) => {
-			if(!success && !canceled)
-				setTimeout(() => {
-					dispatch(studentSlice.actions.setUpToDate(false));
-				}, 2e3);
-		});
-	}, [ dispatch, fetchStudents, upToDate ]);
 
 	return {
 		loading,

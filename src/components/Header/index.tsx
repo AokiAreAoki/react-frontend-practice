@@ -18,11 +18,7 @@ const StyledFlex = styled(Flex)`
 const Header: FC = () => {
 	const dispatch = useTypedDispatch();
 	const tabs = useTypedSelector(state => state.tabs);
-
-	const {
-		loading,
-		user,
-	} = useUser();
+	const { loading, user } = useUser();
 
 	return (
 		<StyledFlex dir="row" justify="space-between">
@@ -36,7 +32,7 @@ const Header: FC = () => {
 			</Flex>
 
 			<Flex gap="5px" dir="row">
-				{tabs.list.map(tab => {
+				{tabs.list.length > 1 && tabs.list.map(tab => {
 					return (
 						<Button
 							key={tab.key}

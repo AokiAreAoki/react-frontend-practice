@@ -18,12 +18,6 @@ const Modal: FC<Props> = ({
 	const ref = useRef<HTMLDialogElement | null>(null);
 
 	useEffect(() => {
-		ref.current?.addEventListener(`dialogopen`, e => {
-			console.log(e);
-		});
-	}, []);
-
-	useEffect(() => {
 		ref.current?.showModal();
 	}, []);
 

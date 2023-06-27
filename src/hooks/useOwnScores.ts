@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
-import ownScoreSlice from "../redux/slices/scores/own";
+import ownScoreSlice from "../redux/slices/ownScores";
+import useDebouncedCallback from "./useDebouncedCallback";
 
 export default function useOwnScores(){
 	const dispatch = useTypedDispatch();
@@ -13,22 +14,32 @@ export default function useOwnScores(){
 
 	const abort = useRef(new AbortController());
 
-	const fetchOwnScores = useCallback(() => {
-		dispatch(ownScoreSlice.actions.setLoading(true));
-
+	const fetchOwnScores = useDebouncedCallback(() => {
 		abort.current.abort();
 		abort.current = new AbortController();
 
-		return API.getOwnScores({ abort: abort.current })
-			.then(context => {
+		dispatch(ownScoreSlice.actions.setLoading(true));
+
+		API.getOwnScores({ abort: abort.current })
+			.then(({ success, response, canceled }) => {
 				dispatch(ownScoreSlice.actions.setLoading(false));
 
-				if(context.success)
-					dispatch(ownScoreSlice.actions.setSemesters(context.response.data));
-
-				return context;
+				if(success){
+					dispatch(ownScoreSlice.actions.setUpToDate(true));
+					dispatch(ownScoreSlice.actions.setSemesters(response.data));
+				} else if(!canceled)
+					setTimeout(() => {
+						dispatch(ownScoreSlice.actions.setUpToDate(false));
+					}, 2e3);
 			});
-	}, [ dispatch ]);
+	}, 200);
+
+	useEffect(() => {
+		if(upToDate || loading)
+			return;
+
+		fetchOwnScores();
+	}, [ dispatch, fetchOwnScores, loading, upToDate ]);
 
 	useEffect(() => {
 		return () => {
@@ -36,21 +47,6 @@ export default function useOwnScores(){
 			abort.current.abort();
 		};
 	}, []);
-
-	useEffect(() => {
-		if(upToDate)
-			return;
-
-		dispatch(ownScoreSlice.actions.setUpToDate(true));
-		dispatch(ownScoreSlice.actions.setLoading(true));
-
-		fetchOwnScores().then(({ success, canceled }) => {
-			if(!success && !canceled)
-				setTimeout(() => {
-					dispatch(ownScoreSlice.actions.setUpToDate(false));
-				}, 2e3);
-		});
-	}, [ dispatch, fetchOwnScores, upToDate ]);
 
 	return {
 		loading,

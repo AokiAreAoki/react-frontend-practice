@@ -1,18 +1,24 @@
 import React, { FC, useState } from "react";
-import { SemesterWithScores } from "../../types/Semester";
+import { Semester, SemesterWithScores } from "../../types/Semester";
 import Flex from "../Flex";
 import Accordion from "../Accordion";
 import ScoreTable from "../ScoreTable";
 import postfix from "../../utils/postfix";
+import { User } from "../../types/User";
+import Nullable from "../../types/Nullable";
 
 interface Props {
+	student: User
 	semester: SemesterWithScores
 	editable: boolean
+	onRefresh: Nullable<() => void>
 }
 
 const Scores: FC<Props> = ({
-	 semester,
-	 editable,
+	student,
+	semester,
+	editable,
+	onRefresh,
 }) => {
 	const [ open, setOpen ] = useState(semester.scores.length !== 0);
 
@@ -30,13 +36,13 @@ const Scores: FC<Props> = ({
 				<b>{postfix(Number(semester.number))} semester</b>
 			</Flex>}
 		>
-			{semester.scores.length === 0
-				? 'No records'
-				: <ScoreTable
-					editable={editable}
-					scores={semester.scores}
-				/>
-			}
+			<ScoreTable
+				student={student}
+				semester={semester}
+				scores={semester.scores}
+				editable={editable}
+				onRefresh={onRefresh}
+			/>
 		</Accordion>
 	);
 };

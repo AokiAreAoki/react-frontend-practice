@@ -1,6 +1,6 @@
 import axios from "axios";
 import Nullable from "../../types/Nullable";
-import Score, { EditableScoreParams } from "../../types/Score";
+import Score, { CreateScoreParams, EditScoreParams } from "../../types/Score";
 
 type TokenResolver = () => Nullable<string>;
 
@@ -127,10 +127,38 @@ class API {
 		}, true);
 	}
 
-	async updateScore(options: { score: Pick<Score, EditableScoreParams> } & BaseRequestOptions) {
+	async createScore(options: {
+		score: Pick<Score, CreateScoreParams>
+	} & BaseRequestOptions) {
+		return await this.request({
+			method: 'post',
+			url: '/api/v1/scores/create',
+			params: {
+				...options.score,
+			},
+			signal: options.abort?.signal,
+		}, true);
+	}
+
+	async updateScore(options: {
+		score: Pick<Score, EditScoreParams>
+	} & BaseRequestOptions) {
 		return await this.request({
 			method: 'post',
 			url: '/api/v1/scores/update',
+			params: {
+				...options.score,
+			},
+			signal: options.abort?.signal,
+		}, true);
+	}
+
+	async deleteScore(options: {
+		score: Pick<Score, "id">
+	} & BaseRequestOptions) {
+		return await this.request({
+			method: 'delete',
+			url: '/api/v1/scores/delete',
 			params: {
 				...options.score,
 			},

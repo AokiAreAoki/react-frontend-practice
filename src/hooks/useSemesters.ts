@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
 import semesterSlice from "../redux/slices/semesters";
+import useDebouncedCallback from "./useDebouncedCallback";
 
 export default function useSemesters(){
 	const dispatch = useTypedDispatch();
@@ -13,43 +14,41 @@ export default function useSemesters(){
 
 	const abort = useRef(new AbortController());
 
-	const fetchSemesters = useCallback(() => {
-		dispatch(semesterSlice.actions.setLoading(true));
-
+	const fetchSemesters = useDebouncedCallback(() => {
 		abort.current.abort();
 		abort.current = new AbortController();
 
-		return API.getSemesters({ abort: abort.current })
-			.then(context => {
+		dispatch(semesterSlice.actions.setLoading(true));
+
+		API.getSemesters({ abort: abort.current })
+			.then(({ success, response, canceled }) => {
 				dispatch(semesterSlice.actions.setLoading(false));
 
-				if(context.success)
-					dispatch(semesterSlice.actions.setData(context.response.data));
+				if(success){
+					dispatch(semesterSlice.actions.setUpToDate(true));
+					dispatch(semesterSlice.actions.setData(response.data));
+				} else if(!canceled)
+					setTimeout(() => {
+						dispatch(semesterSlice.actions.setUpToDate(false));
+					}, 2e3);
 
-				return context;
+				return;
 			});
-	}, [ dispatch ]);
+	}, 200);
 
 	useEffect(() => {
-		if(upToDate)
+		if(upToDate || loading)
 			return;
 
-		dispatch(semesterSlice.actions.setUpToDate(true));
-
-		fetchSemesters().then(async ({ success, canceled }) => {
-			if(!success && !canceled)
-				setTimeout(() => {
-					dispatch(semesterSlice.actions.setUpToDate(false));
-				}, 2e3);
-		});
-	}, [ dispatch, data, upToDate, fetchSemesters ]);
+		fetchSemesters();
+	}, [ dispatch, fetchSemesters, loading, upToDate ]);
 
 	useEffect(() => {
 		return () => {
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			abort.current.abort();
 		};
-	});
+	}, []);
 
 	return {
 		loading,

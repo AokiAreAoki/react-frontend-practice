@@ -11,7 +11,6 @@ import useUser from "../../hooks/useUser";
 import { useLocation, useNavigate } from "react-router-dom";
 import OwnGrades, { RegisterOwnGrades, ownGradesTab } from "./pages/OwnGrades";
 import OthersGrades, { RegisterOthersGrades, othersGradesTab } from "./pages/OthersGrades";
-import SemesterManagement, { RegisterSemesterManagement, semesterManagementTab } from "./pages/SemesterManagement";
 
 const HomePage: FC = () => {
 	const dispatch = useTypedDispatch();
@@ -26,7 +25,6 @@ const HomePage: FC = () => {
 
 	const hasGrades = user?.role.hasGrades;
 	const canSeeOthersGrades = user?.role.canSeeOthersGrades;
-	const canEditSemesters = user?.role.canEditSemesters;
 
 	useEffect(() => {
 		const route = location.pathname.match(/[\w-]+$/)?.[0];
@@ -45,10 +43,10 @@ const HomePage: FC = () => {
 
 	return (
 		<Flex
-			dir="column"
 			grow
-			overflow
+			dir="column"
 			align="stretch"
+			overflow
 		>
 			{hasGrades && <RegisterOwnGrades order={++order} />}
 			{canSeeOthersGrades && <RegisterOthersGrades order={++order} />}
@@ -73,9 +71,6 @@ const HomePage: FC = () => {
 						</Display>
 						<Display display={activeTab === othersGradesTab.key}>
 							<OthersGrades />
-						</Display>
-						<Display display={activeTab === semesterManagementTab.key}>
-							<SemesterManagement />
 						</Display>
 					</>
 				}

@@ -10,7 +10,7 @@ export interface UserState {
 
 const initialState: UserState = {
 	upToDate: false,
-	loading: true,
+	loading: false,
 };
 
 type Reducer<P> = CaseReducer<UserState, PayloadAction<P>>;

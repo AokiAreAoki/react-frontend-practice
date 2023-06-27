@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useTypedDispatch, useTypedSelector } from "../redux";
 import API from "../services/API";
 import userSlice from "../redux/slices/user";
+import useDebouncedCallback from "./useDebouncedCallback";
 
 export default function useUser(){
 	const dispatch = useTypedDispatch();
@@ -13,43 +14,39 @@ export default function useUser(){
 
 	const abort = useRef(new AbortController());
 
-	const fetchUser = useCallback(() => {
-		dispatch(userSlice.actions.setLoading(true));
-
+	const fetchUser = useDebouncedCallback(() => {
 		abort.current.abort();
 		abort.current = new AbortController();
 
-		return API.getUser({ abort: abort.current })
-			.then(context => {
+		dispatch(userSlice.actions.setLoading(true));
+
+		API.getUser({ abort: abort.current })
+			.then(({ success, response, canceled }) => {
 				dispatch(userSlice.actions.setLoading(false));
 
-				if(context.success)
-					dispatch(userSlice.actions.setUserData(context.response.data));
-
-				return context;
+				if(success){
+					dispatch(userSlice.actions.setUpToDate(true));
+					dispatch(userSlice.actions.setUserData(response.data));
+				} else if(!canceled)
+					setTimeout(() => {
+						dispatch(userSlice.actions.setUpToDate(false));
+					}, 2e3);
 			});
-	}, [ dispatch ]);
+	}, 200);
 
 	useEffect(() => {
-		if(upToDate)
+		if(upToDate || loading)
 			return;
 
-		dispatch(userSlice.actions.setUpToDate(true));
-
-		fetchUser().then(({ success, canceled }) => {
-			if(!success && !canceled)
-				setTimeout(() => {
-					dispatch(userSlice.actions.setUpToDate(false));
-				}, 2e3);
-		});
-	}, [ data, dispatch, fetchUser, upToDate ]);
+		fetchUser();
+	}, [ dispatch, fetchUser, loading, upToDate ]);
 
 	useEffect(() => {
 		return () => {
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			abort.current.abort();
 		};
-	});
+	}, []);
 
 	return {
 		loading,

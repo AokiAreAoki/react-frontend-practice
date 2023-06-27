@@ -4,17 +4,23 @@ import Accordion from "../Accordion";
 import Scores from "../Scores";
 import { SemesterWithScores } from "../../types/Semester";
 import postfix from "../../utils/postfix";
+import { User } from "../../types/User";
+import Nullable from "../../types/Nullable";
 
 interface Props {
-	year: number
+	student: User
 	semesters: SemesterWithScores[]
+	year: number
 	editable: boolean
+	onRefresh: Nullable<() => void>
 }
 
 const SemestersWithScores: FC<Props> = ({
-	year,
+	student,
 	semesters,
+	year,
 	editable,
+	onRefresh,
 }) => {
 	const [ open, setOpen ] = useState(semesters.some(semester => semester.scores.length !== 0));
 
@@ -37,8 +43,10 @@ const SemestersWithScores: FC<Props> = ({
 			{semesters.map((semester) => (
 				<Scores
 					key={semester.id}
-					editable={editable}
+					student={student}
 					semester={semester}
+					editable={editable}
+					onRefresh={onRefresh}
 				/>
 			))}
 		</Accordion>
