@@ -6,6 +6,8 @@ import Loading from "../../../../components/Loading";
 import useUser from "../../../../hooks/useUser";
 import makeLookupTable from "../../../../utils/makeLookupTable";
 import Years from "../../../../components/Years";
+import Flex from "../../../../components/Flex";
+import Button from "../../../../components/Button";
 
 export const ownGradesTab: Omit<Tab, 'order'> = {
 	key: 'own-scores',
@@ -37,6 +39,7 @@ const OwnGrades: FC = () => {
 
 	const {
 		loading: loadingScores,
+		refresh,
 		semesters,
 	} = useOwnScores();
 
@@ -51,10 +54,20 @@ const OwnGrades: FC = () => {
 	if(semesters.length === 0)
 		return "No semesters";
 
-	return <Years
-		student={user}
-		years={years}
-	/>;
+	return <Flex gap="10px">
+		<Flex dir="row" justify="space-between" align="center">
+			<div>My scores:</div>
+
+			<Button onClick={refresh}>
+				Refresh
+			</Button>
+		</Flex>
+
+		<Years
+			student={user}
+			years={years}
+		/>
+	</Flex>;
 };
 
 export default OwnGrades;

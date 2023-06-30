@@ -41,6 +41,10 @@ const Input: FC<Props> = ({
 	return (
 		<StyledInput
 			ref={ref}
+			onKeyDown={e => {
+				if(e.key === "Enter")
+					onSubmit?.(e.currentTarget.value);
+			}}
 			{...props}
 
 			error={error}
@@ -48,9 +52,6 @@ const Input: FC<Props> = ({
 			value={value}
 			onChange={e => {
 				onChange?.(e.target.value);
-			}}
-			onSubmit={e => {
-				onSubmit?.(e.currentTarget.value);
 			}}
 		/>
 	);

@@ -45,7 +45,7 @@ const LoginPage: FC = () => {
 			<Flex grow dir="column" justify="center" align="center">
 				<Frame gap='10px' style={{ width: "max( 25%, 300px )" }}>
 					<Flex gap='5px'>
-					Email:
+						{"Email:"}
 						<Input
 							value={uid}
 							onChange={setUid}
@@ -55,7 +55,7 @@ const LoginPage: FC = () => {
 					</Flex>
 
 					<Flex gap='5px'>
-					Password:
+						{"Password:"}
 						<Input
 							value={password}
 							onChange={setPassword}
@@ -65,7 +65,7 @@ const LoginPage: FC = () => {
 					</Flex>
 
 					<Button onClick={submit}>
-					Log in
+						{"Log in"}
 					</Button>
 				</Frame>
 			</Flex>
